@@ -1,0 +1,3 @@
+,Type,AnimMontage,PlayRatio,StartSection,bCanMove
+1,Roll,AnimMontage'/Game/Character/Montages/Common/Roll_Montage.Roll_Montage',2,,FALSE
+2,BackStep,AnimMontage'/Game/Character/Montages/Common/BackStep_Montage.BackStep_Montage',1.5,,FALSE
