@@ -130,7 +130,7 @@ bld/
 #wwwroot/
 
 # Visual Studio 2017 auto generated files
-Generated\ Files/
+#Generated\ Files/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -361,9 +361,9 @@ ServiceFabricBackup/
 *.bim.layout
 *.bim_*.settings
 *.rptproj.rsuser
-*- [Bb]ackup.rdl
-*- [Bb]ackup ([0-9]).rdl
-*- [Bb]ackup ([0-9][0-9]).rdl
+#*- [Bb]ackup.rdl
+#*- [Bb]ackup ([0-9]).rdl
+#*- [Bb]ackup ([0-9][0-9]).rdl
 
 # Microsoft Fakes
 FakesAssemblies/

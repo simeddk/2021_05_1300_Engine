@@ -7,6 +7,7 @@
 #include "Actions/CAttachment.h"
 #include "Actions/CDoAction_Throw.h"
 #include "Actions/CAim.h"
+#include "Actions/CAction.h"
 
 UCActionComponent::UCActionComponent()
 {
@@ -21,15 +22,15 @@ void UCActionComponent::BeginPlay()
 	ACharacter* character = Cast<ACharacter>(GetOwner());
 	for (int32 i = 0; i < (int32)EActionType::Max; i++)
 	{
-		if (!!Datas[i])
-			Datas[i]->BeginPlay(character);
+		if (!!DataAssets[i])
+			DataAssets[i]->BeginPlay(character, &Datas[i]);
 	}
 	
 }
 
 void UCActionComponent::OffAllCollision()
 {
-	for (UCActionData* data : Datas)
+	for (UCAction* data : Datas)
 	{
 		if (!!data == false)
 			continue;

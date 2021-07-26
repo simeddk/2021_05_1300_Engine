@@ -4,11 +4,13 @@
 #include "CEquipment.h"
 #include "CAttachment.h"
 #include "CDoAction.h"
+#include "CAction.h"
 
-void UCActionData::BeginPlay(class ACharacter* InOwnerCharacter)
+void UCActionData::BeginPlay(class ACharacter* InOwnerCharacter, class UCAction** OutAction)
 {
 	FTransform transform;
 
+	ACAttachment* Attachment = nullptr;
 	if (!!AttachmentClass)
 	{
 		Attachment = InOwnerCharacter->GetWorld()->SpawnActorDeferred<ACAttachment>(AttachmentClass, transform, InOwnerCharacter);
@@ -16,6 +18,7 @@ void UCActionData::BeginPlay(class ACharacter* InOwnerCharacter)
 		UGameplayStatics::FinishSpawningActor(Attachment, transform);
 	}
 
+	ACEquipment* Equipment = nullptr;
 	if (!!EquipmentClass)
 	{
 		Equipment = InOwnerCharacter->GetWorld()->SpawnActorDeferred<ACEquipment>(EquipmentClass, transform, InOwnerCharacter);
@@ -32,6 +35,7 @@ void UCActionData::BeginPlay(class ACharacter* InOwnerCharacter)
 		}
 	}
 	
+	ACDoAction* DoAction = nullptr;
 	if (!!DoActionClass)
 	{
 		DoAction = InOwnerCharacter->GetWorld()->SpawnActorDeferred<ACDoAction>(DoActionClass, transform, InOwnerCharacter);
@@ -51,6 +55,12 @@ void UCActionData::BeginPlay(class ACharacter* InOwnerCharacter)
 			Attachment->OnAttachmentEndOverlap.AddDynamic(DoAction, &ACDoAction::OnAttachmentEndOverlap);
 		}
 	}
+
+	*OutAction = NewObject<UCAction>();
+	(*OutAction)->Attachment = Attachment;
+	(*OutAction)->Equipment = Equipment;
+	(*OutAction)->DoAction = DoAction;
+	(*OutAction)->EquipmentColor = EquipmentColor;
 }
 
 FString UCActionData::GetLabelName(ACharacter* InOwnerCharacter, FString InName)

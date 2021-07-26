@@ -29,10 +29,11 @@ private: //SceneComponent
 		class UWidgetComponent* HealthWidget;
 
 
-private: //ActorCompnent
-	UPROPERTY(VisibleDefaultsOnly)
+protected: //ActorCompnent
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
 		class UCActionComponent* Action;
 
+private:
 	UPROPERTY(VisibleDefaultsOnly)
 		class UCMontagesComponent* Montages;
 

@@ -11,7 +11,8 @@ public class U03_Game : ModuleRules
 			"Core",
 			"CoreUObject",
 			"Engine",
-			"InputCore"
+			"InputCore",
+			"AIModule",
 		});
 
 		PublicIncludePaths.Add(ModuleDirectory);
