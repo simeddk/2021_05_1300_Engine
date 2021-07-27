@@ -12,4 +12,7 @@ class U03_GAME_API UCUserWidget_Name : public UUserWidget
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void SetNameText(const FString& InName);
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void SetControllerText(const FString& InName);
 };

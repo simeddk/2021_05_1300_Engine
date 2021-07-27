@@ -4,6 +4,7 @@
 #include "Components/DecalComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/CStatusComponent.h"
+#include "Actions/CAttachment.h"
 
 void ACDoAction_Warp::BeginPlay()
 {
@@ -47,7 +48,6 @@ void ACDoAction_Warp::Begin_DoAction()
 	);
 }
 
-//Miru 01. 수정 예정
 void ACDoAction_Warp::End_DoAction()
 {
 	OwnerCharacter->SetActorLocation(Location);

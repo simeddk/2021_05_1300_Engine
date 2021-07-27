@@ -135,7 +135,7 @@ void UCActionComponent::SetMode(EActionType InType)
 			Datas[(int32)Type]->GetEquipment()->Unequip();
 	}
 
-	if (!!Datas[(int32)InType])
+	if (!!Datas[(int32)InType] && !!Datas[(int32)InType]->GetEquipment())
 		Datas[(int32)InType]->GetEquipment()->Equip();
 
 	ChangeType(InType);

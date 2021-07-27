@@ -2,15 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "CAction.h"
 #include "CActionData.generated.h"
-
-
 
 UCLASS()
 class U03_GAME_API UCActionData : public UDataAsset
 {
 	GENERATED_BODY()
-
 
 
 public:
