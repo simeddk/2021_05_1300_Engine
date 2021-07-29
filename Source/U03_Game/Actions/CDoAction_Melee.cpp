@@ -54,6 +54,8 @@ void ACDoAction_Melee::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* 
 {
 	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOtherCharacter);
 
+	CheckNull(InOtherCharacter);
+
 	//Ignore Already Overlapped Characters
 	for (const ACharacter* other : HittedCharacters)
 	{

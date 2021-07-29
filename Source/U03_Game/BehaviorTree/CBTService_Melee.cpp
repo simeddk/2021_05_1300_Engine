@@ -5,6 +5,7 @@
 #include "Characters/CPlayer.h"
 #include "Components/CBehaviorComponent.h"
 #include "Components/CStateComponent.h"
+#include "Components/CPatrolComponent.h"
 
 UCBTService_Melee::UCBTService_Melee()
 {
@@ -21,6 +22,8 @@ void UCBTService_Melee::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	ACEnemy_AI* aiPawn = Cast<ACEnemy_AI>(controller->GetPawn());
 	UCStateComponent* state = CHelpers::GetComponent<UCStateComponent>(aiPawn);
+	UCPatrolComponent* patrol = CHelpers::GetComponent<UCPatrolComponent>(aiPawn);
+	
 
 	//Hitted
 	if (state->IsHittedMode())
@@ -33,6 +36,12 @@ void UCBTService_Melee::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	ACPlayer* target = behavior->GetTargetPlayer();
 	if (target == nullptr)
 	{
+		if (patrol != nullptr && patrol->IsValid())
+		{
+			behavior->SetPatrolMode();
+			return;
+		}
+
 		behavior->SetWaitMode();
 		return;
 	}

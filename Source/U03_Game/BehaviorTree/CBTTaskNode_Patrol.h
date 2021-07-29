@@ -2,22 +2,18 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "Components/CStatusComponent.h"
-#include "CBTTaskNode_Speed.generated.h"
+#include "CBTTaskNode_Patrol.generated.h"
 
 UCLASS()
-class U03_GAME_API UCBTTaskNode_Speed : public UBTTaskNode
+class U03_GAME_API UCBTTaskNode_Patrol : public UBTTaskNode
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY(EditAnywhere)
-		ECharacterSpeed Type;
-
 public:
-	UCBTTaskNode_Speed();
+	UCBTTaskNode_Patrol();
 
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 	
 };
