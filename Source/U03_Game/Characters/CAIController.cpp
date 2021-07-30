@@ -25,6 +25,18 @@ ACAIController::ACAIController()
 	Perception->ConfigureSense(*Sight);
 }
 
+void ACAIController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	CheckFalse(bDrawDebug);
+
+	FVector center = OwnerEnemy->GetActorLocation();
+	center.Z -= DebugHeight;
+	DrawDebugCircle(GetWorld(), center, Sight->SightRadius, 300, FColor::Green, false, -1, 0, 0, FVector::RightVector, FVector::ForwardVector);
+	DrawDebugCircle(GetWorld(), center, BehaviorRange, 300, FColor::Red, false, -1, 0, 0, FVector::RightVector, FVector::ForwardVector);
+}
+
 float ACAIController::GetSightRadius()
 {
 	return Sight->SightRadius;

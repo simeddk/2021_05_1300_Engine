@@ -20,6 +20,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 private:
+	class ACPlayer* UseCursorLocation();
 	bool GetCursorLocationAndRotation(FVector& OutLocation, FRotator& OutRotation);
 
 private:

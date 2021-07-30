@@ -12,6 +12,12 @@ class U03_GAME_API ACAIController : public AAIController
 private:
 	UPROPERTY(EditAnywhere)
 		float BehaviorRange = 150.0f;
+
+	UPROPERTY(EditAnywhere)
+		bool bDrawDebug = true;
+
+	UPROPERTY(EditAnywhere)
+		float DebugHeight = 50.0f;
 		
 private:
 	UPROPERTY(VisibleDefaultsOnly)
@@ -25,7 +31,9 @@ public:
 
 public:
 	ACAIController();
+	virtual void Tick(float DeltaTime) override;
 
+public:
 	float GetSightRadius();
 
 protected:

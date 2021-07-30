@@ -16,8 +16,8 @@ EBTNodeResult::Type UCBTTaskNode_Patrol::ExecuteTask(UBehaviorTreeComponent& Own
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	ACAIController* controller = Cast<ACAIController>(OwnerComp.GetOwner());
-	ACEnemy_AI* aiPawn = Cast<ACEnemy_AI>(controller->GetPawn());
 
+	ACEnemy_AI* aiPawn = Cast<ACEnemy_AI>(controller->GetPawn());
 	UCPatrolComponent* patrol = CHelpers::GetComponent<UCPatrolComponent>(aiPawn);
 
 	FVector location;
@@ -34,13 +34,27 @@ void UCBTTaskNode_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	/*ACAIController* controller = Cast<ACAIController>(OwnerComp.GetOwner());
+	ACAIController* controller = Cast<ACAIController>(OwnerComp.GetOwner());
+	
+	ACEnemy_AI* aiPawn = Cast<ACEnemy_AI>(controller->GetPawn());
+	UCPatrolComponent* patrol = CHelpers::GetComponent<UCPatrolComponent>(aiPawn);
+
 	FVector location;
 	float accpeptance;
+	patrol->GetMoveTo(location, accpeptance);
+
 	EPathFollowingRequestResult::Type type = controller->MoveToLocation(location, accpeptance, false);
 
 	if (type == EPathFollowingRequestResult::Failed)
 	{
-		''
-	}*/
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+		return;
+	}
+
+	if (type == EPathFollowingRequestResult::AlreadyAtGoal)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		patrol->UpdateNextIndex();
+	}
+	
 }
