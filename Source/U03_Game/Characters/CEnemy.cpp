@@ -1,6 +1,7 @@
 #include "CEnemy.h"
 #include "Global.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/CStatusComponent.h"
 #include "Components/CMontagesComponent.h"
@@ -77,15 +78,16 @@ void ACEnemy::BeginPlay()
 	HealthWidget->InitWidget();
 	Cast<UCUserWidget_Health>(HealthWidget->GetUserWidgetObject())->Update(Status->GetHealth(), Status->GetMaxHealth());
 
-	//Action->SetUnarmedMode();
+	NameWidget->SetVisibility(bDrawName);
 }
-
 
 
 float ACEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float damage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 	DamageInstigator = EventInstigator;
+
+	Action->AbortByDamage();
 
 	Status->SubHealth(damage);
 
@@ -100,20 +102,13 @@ float ACEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 	return Status->GetHealth();
 }
 
-void ACEnemy::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
-{
-	switch (InNewType)
-	{
-		case EStateType::Hitted: Hitted();	break;
-		case EStateType::Dead: Dead();	break;
-	}
-}
-
 void ACEnemy::Hitted()
 {
 	//Update Health Widget
-	Cast<UCUserWidget_Health>(HealthWidget->GetUserWidgetObject())
-		->Update(Status->GetHealth(), Status->GetMaxHealth());
+	Cast<UCUserWidget_Health>(HealthWidget->GetUserWidgetObject())->Update(Status->GetHealth(), Status->GetMaxHealth());
+
+	//SetMove
+	Status->SetMove();
 
 	//Play Hitted Montage
 	Montages->PlayHitted();
@@ -122,6 +117,7 @@ void ACEnemy::Hitted()
 	FVector start = GetActorLocation();
 	FVector target = DamageInstigator->GetPawn()->GetActorLocation();
 	SetActorRotation(UKismetMathLibrary::FindLookAtRotation(start, target));
+	//DamageInstigator = nullptr;
 
 	//Launch Character
 	FVector direction = target - start;
@@ -133,6 +129,17 @@ void ACEnemy::Hitted()
 	UKismetSystemLibrary::K2_SetTimer(this, "ResetColor", LogoLightTime, false);
 }
 
+void ACEnemy::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
+{
+	switch (InNewType)
+	{
+		case EStateType::Hitted: Hitted();	break;
+		case EStateType::Dead: Dead();	break;
+	}
+}
+
+
+
 void ACEnemy::Dead()
 {
 	CheckFalse(State->IsDeadMode());
@@ -140,7 +147,16 @@ void ACEnemy::Dead()
 	NameWidget->SetVisibility(false);
 	HealthWidget->SetVisibility(false);
 
+	Action->Dead();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	Montages->PlayDead();
+}
+
+void ACEnemy::End_Dead()
+{
+	Action->End_Dead();
+	Destroy();
 }
 
 void ACEnemy::ChangeColor(FLinearColor InColor)

@@ -1,3 +1,5 @@
 ,Type,AnimMontage,PlayRatio,StartSection,bCanMove
 1,Roll,AnimMontage'/Game/Character/Montages/Common/Roll_Montage.Roll_Montage',2,,FALSE
 2,BackStep,AnimMontage'/Game/Character/Montages/Common/BackStep_Montage.BackStep_Montage',1.5,,FALSE
+3,Hitted,AnimMontage'/Game/Character/Montages/Common/Hit_Player_Montage.Hit_Player_Montage',1.5,,TRUE
+4,Dead,AnimMontage'/Game/Character/Montages/Common/DeadFall_Montage.DeadFall_Montage',1,Start,FALSE

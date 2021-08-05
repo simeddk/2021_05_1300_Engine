@@ -3,12 +3,14 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/CStatusComponent.h"
 #include "Components/COptionComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CActionComponent.h"
 #include "Materials/MaterialInstanceConstant.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Widgets/CUserWidget_Select.h"
 
 ACPlayer::ACPlayer()
 {
@@ -47,7 +49,10 @@ ACPlayer::ACPlayer()
 	GetCharacterMovement()->MaxWalkSpeed = Status->GetSprintSpeed();
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);
+
+	CHelpers::GetClass<UCUserWidget_Select>(&SelectWidgetClass, "WidgetBlueprint'/Game/Widgets/WB_Select.WB_Select_C'");
 }
+
 
 void ACPlayer::BeginPlay()
 {
@@ -69,6 +74,11 @@ void ACPlayer::BeginPlay()
 	State->OnStateTypeChanged.AddDynamic(this, &ACPlayer::OnStateTypeChanged);
 
 	Action->SetUnarmedMode();
+
+	SelectWidget = CreateWidget<UCUserWidget_Select, APlayerController>(GetController<APlayerController>(), SelectWidgetClass);
+	SelectWidget->AddToViewport();
+
+	GetController<APlayerController>()->bShowMouseCursor = true;
 }
 
 void ACPlayer::Tick(float DeltaTime)
@@ -256,6 +266,51 @@ void ACPlayer::OffAim()
 	Action->DoAim_End();
 }
 
+float ACPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float damage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	DamageInstigator = EventInstigator;
+
+	Action->AbortByDamage();
+
+	Status->SubHealth(damage);
+
+	if (Status->GetHealth() <= 0.0f)
+	{
+		State->SetDeadMode();
+		return 0.0f;
+	}
+
+	State->SetHittedMode();
+
+	return Status->GetHealth();
+}
+
+void ACPlayer::Hitted()
+{
+	Status->SetMove();
+	Montages->PlayHitted();
+}
+
+void ACPlayer::Dead()
+{
+	Action->Dead();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	Montages->PlayDead();
+}
+
+void ACPlayer::End_Dead()
+{
+	Action->End_Dead();
+
+	UKismetSystemLibrary::QuitGame(GetWorld(), GetController<APlayerController>(), EQuitPreference::Quit, false);
+	//Get Player Controller
+	//(1)UGameplayStatics::GetPlayerController(GetWorld());
+	//(2)GetController<APlayerController>()
+	//(3)GetWorld()->GetFirstPlayercontroller()
+}
+
 
 void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
@@ -263,6 +318,8 @@ void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 	{
 		case EStateType::Roll:	Begin_Roll(); break;
 		case EStateType::BackStep: Begin_BackStep(); break;
+		case EStateType::Hitted: Hitted(); break;
+		case EStateType::Dead: Dead(); break;
 	}
 }
 

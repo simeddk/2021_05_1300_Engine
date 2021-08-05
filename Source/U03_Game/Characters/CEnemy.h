@@ -12,6 +12,9 @@ class U03_GAME_API ACEnemy : public ACharacter, public IICharacter
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(EditAnywhere)
+		bool bDrawName = true;
+
 	UPROPERTY(EditDefaultsOnly)
 		float LauchValue = 100.0f;
 
@@ -67,6 +70,8 @@ private:
 private:
 	void Hitted();
 	void Dead();
+
+	void End_Dead() override;
 
 private:
 	class UMaterialInstanceDynamic* BodyMaterial;

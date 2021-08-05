@@ -66,6 +66,11 @@ public:
 	void DoAim_Begin();
 	void DoAim_End();
 
+	void Dead();
+	void End_Dead();
+
+	void AbortByDamage();
+
 private:
 	void SetMode(EActionType InType);
 	void ChangeType(EActionType InNewType);

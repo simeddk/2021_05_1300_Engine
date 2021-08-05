@@ -17,4 +17,5 @@ class U03_GAME_API IICharacter
 
 public:
 	virtual void ChangeColor(FLinearColor InColor) = 0;
+	virtual void End_Dead() {}
 };

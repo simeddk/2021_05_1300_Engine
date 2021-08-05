@@ -121,6 +121,37 @@ void UCActionComponent::DoAim_End()
 	}
 }
 
+void UCActionComponent::Dead()
+{
+	OffAllCollision();
+}
+
+void UCActionComponent::End_Dead()
+{
+	for (int32 i = 0; i < (int32)EActionType::Max; i++)
+	{
+		if (!!Datas[i] && !!Datas[i]->GetAttachment())
+			Datas[i]->GetAttachment()->Destroy();
+
+		if (!!Datas[i] && !!Datas[i]->GetEquipment())
+			Datas[i]->GetEquipment()->Destroy();
+
+		if (!!Datas[i] && !!Datas[i]->GetDoAction())
+			Datas[i]->GetDoAction()->Destroy();
+	}
+}
+
+void UCActionComponent::AbortByDamage()
+{
+	CheckNull(Datas[(int32)Type]);
+	CheckTrue(IsUnarmedMode());
+
+	Datas[(int32)Type]->GetEquipment()->Begin_Equip();
+	Datas[(int32)Type]->GetEquipment()->End_Equip();
+
+	Datas[(int32)Type]->GetDoAction()->Abort();
+}
+
 void UCActionComponent::SetMode(EActionType InType)
 {
 	if (Type == InType)
