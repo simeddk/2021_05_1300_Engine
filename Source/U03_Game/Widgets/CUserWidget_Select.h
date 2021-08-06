@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -12,8 +10,20 @@ class U03_GAME_API UCUserWidget_Select : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	FORCEINLINE class UCUserWidget_SelectItem* GetItem(FString InName) { return Items[InName]; }
+
+public:
 	void Clicked(FString InName);
 	void Hover(FString InName);
 	void Unhover(FString InName);
+
+protected:
+	virtual void NativeConstruct() override;
 	
+protected:
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+		class UGridPanel* Grid;
+
+	UPROPERTY(BlueprintReadOnly)
+		TMap<FString, class UCUserWidget_SelectItem*> Items;
 };
