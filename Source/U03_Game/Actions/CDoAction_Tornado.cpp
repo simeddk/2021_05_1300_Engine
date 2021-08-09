@@ -64,26 +64,69 @@ void ACDoAction_Tornado::End_DoAction()
 	UKismetSystemLibrary::K2_SetTimerDelegate(dele, LifeTime, false);
 }
 
-void ACDoAction_Tornado::Abort()
-{
-}
-
 void ACDoAction_Tornado::Tick(float DeltaSeconds)
 {
+	Super::Tick(DeltaSeconds);
+	FVector location = OwnerCharacter->GetActorLocation();
+
+	Angle += Speed * DeltaSeconds;
+
+	if (FMath::IsNearlyEqual(Angle, 360.0f))
+		Angle = 0.0f;
+
+	FVector pivot = FVector(Distance, 0, 0);
+	FVector value = pivot.RotateAngleAxis(Angle, FVector::UpVector);
+
+	location += value;
+
+	Box->SetWorldLocation(location);
 }
 
 void ACDoAction_Tornado::Hitted()
 {
+	FDamageEvent e;
+	for (ACharacter* character : HittedCharacters)
+	{
+		bool bDead = false;
+		ACEnemy* enemy = Cast<ACEnemy>(character);
+		if (!!enemy)
+		{
+			UCStateComponent* state = CHelpers::GetComponent<UCStateComponent>(enemy);
+			bDead = state->IsDeadMode();
+		}
+
+		if (!!character && bDead == false)
+		{
+			character->TakeDamage(Datas[0].Power, e, OwnerCharacter->GetController(), this);
+			break;
+		}
+	}
 }
 
 void ACDoAction_Tornado::Finish()
 {
+	if (!!AttachParticle)
+		AttachParticle->DestroyComponent();
+
+	bOnce = false;
+
+	ACAttachment* attachment = Cast<ACAttachment>(Box->GetOwner());
+	attachment->OffCollision();
+
+	UKismetSystemLibrary::K2_ClearTimer(this, "Hitted");
 }
 
 void ACDoAction_Tornado::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOtherCharacter)
 {
+	HittedCharacters.AddUnique(InOtherCharacter);
 }
 
 void ACDoAction_Tornado::OnAttachmentEndOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOtherCharacter)
 {
+	HittedCharacters.Remove(InOtherCharacter);
+}
+
+void ACDoAction_Tornado::Abort()
+{
+	Finish();
 }
