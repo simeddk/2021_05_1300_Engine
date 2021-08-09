@@ -49,6 +49,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class ACThrow> ThrowClass;
+
+	UPROPERTY(EditAnywhere)
+		FString CollisionName = "None";
 };
 
 UCLASS()

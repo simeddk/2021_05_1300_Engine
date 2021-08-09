@@ -33,7 +33,7 @@ public:
 public:	
 	ACAttachment();
 
-	void OnCollision();
+	void OnCollision(FString InCollisionName = "None");
 	void OffCollision();
 
 protected:

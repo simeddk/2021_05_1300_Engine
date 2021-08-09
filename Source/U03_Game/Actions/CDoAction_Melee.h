@@ -12,6 +12,7 @@ class U03_GAME_API ACDoAction_Melee : public ACDoAction
 public:
 	FORCEINLINE void EnableCombo() { bEnable = true; }
 	FORCEINLINE void DisableCombo() { bEnable = false; }
+	FORCEINLINE FString GetCollisionName() { return Datas[Index].CollisionName; }
 	
 public:
 	void DoAction() override;

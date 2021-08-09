@@ -44,10 +44,20 @@ void ACAttachment::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponen
 		OnAttachmentEndOverlap.Broadcast(OwnerCharacter, this, Cast<ACharacter>(OtherActor));
 }
 
-void ACAttachment::OnCollision()
+void ACAttachment::OnCollision(FString InCollisionName)
 {
+	CLog::Print(InCollisionName); //Miru
+
 	for (UShapeComponent* component : ShapeComponents)
-		component->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	{
+		if (GetName().Contains("Attachment_Fist"))
+		{
+			if (component->GetName() == InCollisionName)
+				component->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		}
+		else
+			component->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
 }
 
 void ACAttachment::OffCollision()
