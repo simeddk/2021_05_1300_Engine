@@ -11,5 +11,7 @@ class U03_GAME_API ACGameMode : public AGameModeBase
 
 public:
 	ACGameMode();
+
+	void Tick(float DeltaSeconds) override;
 	
 };

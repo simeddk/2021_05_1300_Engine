@@ -17,8 +17,8 @@ private:
 		class USplineComponent* Spline;
 
 public:
-	class UCurveFloat* GetCurve() { return Curve; }
-	class USplineComponent* GetSpline() { return Spline; }
+	FORCEINLINE class UCurveFloat* GetCurve() { return Curve; }
+	FORCEINLINE class USplineComponent* GetSpline() { return Spline; }
 
 public:	
 	ACCameraSpline();
