@@ -72,6 +72,7 @@ private:
 
 private:
 	void OnEvade();
+	void OnInteract();
 
 private:
 	void Begin_BackStep();
@@ -101,6 +102,12 @@ private:
 	void Dead();
 	void End_Dead() override;
 
+	UFUNCTION()
+		void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 public:
 	virtual void ChangeColor(FLinearColor InColor) override;
 
@@ -114,6 +121,7 @@ private:
 
 private:
 	class AController* DamageInstigator;
+	class ACInteractDoor* InteractDoor;
 
 protected:
 	UPROPERTY(BlueprintReadOnly)

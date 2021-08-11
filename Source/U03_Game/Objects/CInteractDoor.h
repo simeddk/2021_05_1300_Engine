@@ -38,9 +38,24 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+private:
+	void Opening(float DeltaTime);
+	void Closing(float DeltaTime);
+
 public:	
 	virtual void Tick(float DeltaTime) override;
 
 	void Interact(const FVector& InForward);
 
+
+private:
+	bool bClosed = true;
+
+	bool bOpening = false;
+	bool bClosing = false;
+
+	float Direction;
+	float Degree;
+
+	float AddRotation;
 };

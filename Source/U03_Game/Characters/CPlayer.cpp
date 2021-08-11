@@ -12,6 +12,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Widgets/CUserWidget_Select.h"
 #include "Widgets/CUserWidget_SelectItem.h"
+#include "Objects/CInteractDoor.h"
 
 ACPlayer::ACPlayer()
 {
@@ -89,6 +90,9 @@ void ACPlayer::BeginPlay()
 	SelectWidget->GetItem("Item4")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnMagicBall);
 	SelectWidget->GetItem("Item5")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnWarp);
 	SelectWidget->GetItem("Item6")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnTornado);
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACPlayer::OnComponentBeginOverlap);
+	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ACPlayer::OnComponentEndOverlap);
 }
 
 void ACPlayer::Tick(float DeltaTime)
@@ -126,6 +130,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("SelectAction", EInputEvent::IE_Pressed, this, &ACPlayer::OnSelectAction);
 	PlayerInputComponent->BindAction("SelectAction", EInputEvent::IE_Released, this, &ACPlayer::OffSelectAction);
+	
+	PlayerInputComponent->BindAction("Interact", EInputEvent::IE_Released, this, &ACPlayer::OnInteract);
 }
 
 FGenericTeamId ACPlayer::GetGenericTeamId() const
@@ -191,6 +197,12 @@ void ACPlayer::OnEvade()
 	}
 
 	State->SetRollMode();
+}
+
+void ACPlayer::OnInteract()
+{
+	CheckNull(InteractDoor);
+	InteractDoor->Interact(GetActorForwardVector());
 }
 
 void ACPlayer::Begin_BackStep()
@@ -351,6 +363,26 @@ void ACPlayer::End_Dead()
 	//(1)UGameplayStatics::GetPlayerController(GetWorld());
 	//(2)GetController<APlayerController>()
 	//(3)GetWorld()->GetFirstPlayercontroller()
+}
+
+void ACPlayer::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	CheckNull(OtherActor);
+	CheckNull(OtherComp);
+	CheckTrue(OtherActor == this);
+
+	if (OtherActor->GetClass()->IsChildOf(ACInteractDoor::StaticClass()))
+		InteractDoor = Cast<ACInteractDoor>(OtherActor);
+}
+
+void ACPlayer::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	CheckNull(OtherActor);
+	CheckNull(OtherComp);
+	CheckTrue(OtherActor == this);
+
+	if (!!InteractDoor)
+		InteractDoor = nullptr;
 }
 
 

@@ -46,6 +46,7 @@ void ACCameraActor::StartTimeline()
 	FOnTimelineEvent finish;
 	finish.BindUFunction(this, "OnEndProcess");
 
+	Timeline = FTimeline();
 	Timeline.AddInterpFloat(Spline->GetCurve(), process);
 	Timeline.SetTimelineFinishedFunc(finish);
 	Timeline.SetPlayRate(0.25f);

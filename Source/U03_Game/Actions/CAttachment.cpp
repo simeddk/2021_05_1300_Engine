@@ -46,8 +46,6 @@ void ACAttachment::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponen
 
 void ACAttachment::OnCollision(FString InCollisionName)
 {
-	CLog::Print(InCollisionName); //Miru
-
 	for (UShapeComponent* component : ShapeComponents)
 	{
 		if (GetName().Contains("Attachment_Fist"))
