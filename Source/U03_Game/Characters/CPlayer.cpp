@@ -8,6 +8,7 @@
 #include "Components/COptionComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CActionComponent.h"
+#include "Components/CFeetComponent.h"
 #include "Materials/MaterialInstanceConstant.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Widgets/CUserWidget_Select.h"
@@ -28,6 +29,7 @@ ACPlayer::ACPlayer()
 	CHelpers::CreateActorComponent(this, &Option, "Option");
 	CHelpers::CreateActorComponent(this, &State, "State");
 	CHelpers::CreateActorComponent(this, &Action, "Action");
+	CHelpers::CreateActorComponent(this, &Feet, "Feet");
 
 	//Component Settings
 	USkeletalMesh* mesh;

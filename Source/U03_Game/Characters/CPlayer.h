@@ -39,6 +39,9 @@ private: //ActorComponent
 	UPROPERTY(VisibleDefaultsOnly)
 		class UCActionComponent* Action;
 
+	UPROPERTY(VisibleDefaultsOnly)
+		class UCFeetComponent* Feet;
+
 public:
 	FORCEINLINE class UCUserWidget_Select* GetSelectWidget() { return SelectWidget; }
 
