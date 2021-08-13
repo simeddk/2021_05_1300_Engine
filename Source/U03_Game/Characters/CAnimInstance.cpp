@@ -27,7 +27,10 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	UCFeetComponent* feet = CHelpers::GetComponent<UCFeetComponent>(character);
 	if (!!feet)
+	{
 		FeetData = feet->GetData();
+		bUseIk = feet->GetUseIK();
+	}
 
 }
 

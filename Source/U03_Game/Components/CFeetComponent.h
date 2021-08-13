@@ -53,6 +53,7 @@ protected:
 
 public:
 	FORCEINLINE const FFeetData& GetData() { return Data; }
+	FORCEINLINE bool GetUseIK() { return bUseIK; }
 
 public:	
 	UCFeetComponent();
@@ -64,11 +65,19 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	void Trace(FName InSocket, float& OutDistance);
+	void Trace(FName InSocket, float& OutDistance, FRotator& OutRotation);
+
+	UFUNCTION()
+		void OnActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+	UFUNCTION()
+		void OnActorEndOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
 private:
 	FFeetData Data;
 
 	class ACharacter* OwnerCharacter;
 	float CapsuleHalfHeight;
+
+	bool bUseIK;
 };

@@ -23,6 +23,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		FFeetData FeetData;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+		bool bUseIk;
 	
 protected:
 	virtual void NativeBeginPlay() override;
