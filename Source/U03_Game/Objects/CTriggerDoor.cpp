@@ -32,7 +32,7 @@ void ACTriggerDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Box->SetHiddenInGame(bHiddenEdLevel);
+	Box->SetHiddenInGame(bHiddenInGame);
 
 	Box->OnComponentBeginOverlap.AddDynamic(this, &ACTriggerDoor::OnComponentBeginOverlap);
 	Box->OnComponentEndOverlap.AddDynamic(this, &ACTriggerDoor::OnComponentEndOverlap);
