@@ -24,7 +24,9 @@ public class Example : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"EditorStyle"
+				"EditorStyle",
+				"Projects"
+
 			}
 			);
 

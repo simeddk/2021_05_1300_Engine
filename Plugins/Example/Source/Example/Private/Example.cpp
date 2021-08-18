@@ -3,12 +3,13 @@
 #include "LevelEditor.h"
 #include "DebuggerCategory/CGameplayDebuggerCategory.h"
 #include "ToolbarCommand/CToolbarCommand.h"
+#include "Interfaces/IPluginManager.h"
+#include "Styling/SlateStyleRegistry.h"
 
 #define LOCTEXT_NAMESPACE "FExampleModule"
 
 void FExampleModule::StartupModule()
 {
-
 	//DebuggerCategory
 	{
 		IGameplayDebugger& gameplayDebugger = IGameplayDebugger::Get();
@@ -42,6 +43,19 @@ void FExampleModule::StartupModule()
 		FLevelEditorModule& levelEditor = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
 		levelEditor.GetToolBarExtensibilityManager()->AddExtender(ToolbarExtender);
 	}
+
+	//StyleSet
+	{
+		StyleSet = MakeShareable(new FSlateStyleSet("ExampleStyle"));
+
+		FString path = IPluginManager::Get().FindPlugin("Example")->GetContentDir();
+		StyleSet->SetContentRoot(path);
+
+		FSlateImageBrush* brush = new FSlateImageBrush(path / L"Icon.png", FVector2D(48, 48));
+		StyleSet->Set("Example.ToolbarIcon", brush);
+
+		FSlateStyleRegistry::RegisterSlateStyle(*StyleSet.Get());
+	}
 }
 
 void FExampleModule::ShutdownModule()
@@ -52,13 +66,16 @@ void FExampleModule::ShutdownModule()
 		gameplayDebugger.UnregisterCategory("ExampleCategory");
 	}
 
+	FSlateStyleRegistry::UnRegisterSlateStyle("ExampleStyle");
+	StyleSet.Reset();
+
 	ToolbarExtender->RemoveExtension(Extension.ToSharedRef());
 	ToolbarExtender.Reset();
 }
 
 void FExampleModule::AddToolbarExtension(FToolBarBuilder& InBuilder)
 {
-	FSlateIcon icon = FSlateIcon(FEditorStyle::GetStyleSetName(), "LevelEditor.SelectMode");
+	FSlateIcon icon = FSlateIcon("ExampleStyle", "Example.ToolbarIcon");
 
 	InBuilder.AddToolBarButton
 	(
