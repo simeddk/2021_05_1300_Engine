@@ -16,6 +16,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Team")
 		uint8 TeamID = 0;
 
+	UPROPERTY(EditDefaultsOnly)
+		class UCDataAsset* Test_DataAsset;
+
 private: //SceneComponent
 	UPROPERTY(VisibleDefaultsOnly)
 		class USpringArmComponent* SpringArm;

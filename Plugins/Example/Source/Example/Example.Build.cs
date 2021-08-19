@@ -25,7 +25,8 @@ public class Example : ModuleRules
 				"Slate",
 				"SlateCore",
 				"EditorStyle",
-				"Projects"
+				"Projects",
+				"UnrealEd"
 
 			}
 			);

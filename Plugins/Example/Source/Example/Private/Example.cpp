@@ -5,6 +5,8 @@
 #include "ToolbarCommand/CToolbarCommand.h"
 #include "Interfaces/IPluginManager.h"
 #include "Styling/SlateStyleRegistry.h"
+#include "AssetToolsModule.h"
+#include "DataAsset/CDataAssetAction.h"
 
 #define LOCTEXT_NAMESPACE "FExampleModule"
 
@@ -32,11 +34,19 @@ void FExampleModule::StartupModule()
 		CToolbarCommand::Register();
 		ToolbarExtender = MakeShareable(new FExtender());
 		
+		TSharedPtr<FUICommandList> commandList = MakeShareable(new FUICommandList());
+		commandList->MapAction
+		(
+			CToolbarCommand::Get().Button,
+			FExecuteAction::CreateRaw(this, &FExampleModule::ToolbarButton_Clicked),
+			FCanExecuteAction()
+		);
+
 		Extension = ToolbarExtender->AddToolBarExtension
 		(
 			"Compile",
 			EExtensionHook::After,
-			nullptr,
+			commandList,
 			FToolBarExtensionDelegate::CreateRaw(this, &FExampleModule::AddToolbarExtension)
 		);
 
@@ -56,6 +66,15 @@ void FExampleModule::StartupModule()
 
 		FSlateStyleRegistry::RegisterSlateStyle(*StyleSet.Get());
 	}
+
+	//AssetTool
+	{
+		IAssetTools& assetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+		//EAssetTypeCategories::Type category = EAssetTypeCategories::Misc;
+		EAssetTypeCategories::Type category = assetTools.RegisterAdvancedAssetCategory(FName(), FText::FromString("CustomCategory"));
+		Action = MakeShareable(new CDataAssetAction(category));
+		assetTools.RegisterAssetTypeActions(Action.ToSharedRef());
+	}
 }
 
 void FExampleModule::ShutdownModule()
@@ -71,6 +90,7 @@ void FExampleModule::ShutdownModule()
 
 	ToolbarExtender->RemoveExtension(Extension.ToSharedRef());
 	ToolbarExtender.Reset();
+
 }
 
 void FExampleModule::AddToolbarExtension(FToolBarBuilder& InBuilder)
@@ -85,6 +105,11 @@ void FExampleModule::AddToolbarExtension(FToolBarBuilder& InBuilder)
 		FText::FromString("Hi"),
 		icon
 	);
+}
+
+void FExampleModule::ToolbarButton_Clicked()
+{
+	UE_LOG(LogTemp, Error, L"Hello Unreal~~~");
 }
 
 #undef LOCTEXT_NAMESPACE

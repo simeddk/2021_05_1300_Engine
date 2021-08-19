@@ -1,4 +1,5 @@
 #include "CGameplayDebuggerCategory.h"
+#include "GameFramework/PlayerController.h"
 
 CGameplayDebuggerCategory::CGameplayDebuggerCategory()
 {
