@@ -2,6 +2,7 @@
 #include "DetailLayoutBuilder.h"
 #include "DetailCategoryBuilder.h"
 #include "DetailWidgetRow.h"
+#include "Objects/CButtonActor.h"
 
 CCustomDetailPannel::CCustomDetailPannel()
 {
@@ -38,5 +39,13 @@ void CCustomDetailPannel::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 
 FReply CCustomDetailPannel::OnClicked()
 {
+	for (TWeakObjectPtr<UObject>& object : Objects)
+	{
+		ACButtonActor* actor = Cast<ACButtonActor>(object);
+
+		if (!!actor)
+			actor->ApplyColor(FLinearColor::MakeRandomColor());
+	}
+
 	return FReply::Handled();
 }

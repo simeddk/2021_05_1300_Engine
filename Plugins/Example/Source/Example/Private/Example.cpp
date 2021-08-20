@@ -7,6 +7,8 @@
 #include "Styling/SlateStyleRegistry.h"
 #include "AssetToolsModule.h"
 #include "DataAsset/CDataAssetAction.h"
+#include "DetailPannel/CCustomDetailPannel.h"
+#include "Objects/CButtonActor.h"
 
 #define LOCTEXT_NAMESPACE "FExampleModule"
 
@@ -74,6 +76,16 @@ void FExampleModule::StartupModule()
 		EAssetTypeCategories::Type category = assetTools.RegisterAdvancedAssetCategory(FName(), FText::FromString("CustomCategory"));
 		Action = MakeShareable(new CDataAssetAction(category));
 		assetTools.RegisterAssetTypeActions(Action.ToSharedRef());
+	}
+
+	//DetailPannel
+	{
+		FPropertyEditorModule& propertyEditor = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+		propertyEditor.RegisterCustomClassLayout
+		(
+			ACButtonActor::StaticClass()->GetFName(),
+			FOnGetDetailCustomizationInstance::CreateStatic(&CCustomDetailPannel::MakeInstance)
+		);
 	}
 }
 
