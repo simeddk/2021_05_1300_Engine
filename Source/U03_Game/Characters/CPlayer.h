@@ -26,6 +26,9 @@ private: //SceneComponent
 	UPROPERTY(VisibleDefaultsOnly)
 		class UCameraComponent* Camera;
 
+	UPROPERTY(VisibleDefaultsOnly)
+		class UPostProcessComponent* PostProcess;
+
 private: //ActorComponent
 	UPROPERTY(VisibleDefaultsOnly)
 		class UCStatusComponent* Status;
@@ -105,6 +108,10 @@ private:
 	void OffSelectAction();
 
 	void Hitted();
+	
+	UFUNCTION()
+		void Hitted_End();
+
 	void Dead();
 	void End_Dead() override;
 

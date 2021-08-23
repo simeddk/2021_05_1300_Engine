@@ -3,6 +3,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/PostProcessComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/CStatusComponent.h"
 #include "Components/COptionComponent.h"
@@ -23,6 +24,7 @@ ACPlayer::ACPlayer()
 	//Create SceneComponent
 	CHelpers::CreateComponent(this, &SpringArm, "SpringArm", GetMesh());
 	CHelpers::CreateComponent(this, &Camera, "Camera", SpringArm);
+	CHelpers::CreateComponent(this, &PostProcess, "PostProcess", GetRootComponent());
 
 	//Create ActorComponent
 	CHelpers::CreateActorComponent(this, &Status, "Status");
@@ -57,8 +59,16 @@ ACPlayer::ACPlayer()
 
 	CHelpers::GetClass<UCUserWidget_Select>(&SelectWidgetClass, "WidgetBlueprint'/Game/Widgets/WB_Select.WB_Select_C'");
 
+	UTexture* dirtMask;
+	CHelpers::GetAsset<UTexture>(&dirtMask, "Texture2D'/Game/Textures/T_SpeedLine.T_SpeedLine'");
+	PostProcess->bEnabled = true;
+	PostProcess->Settings.BloomDirtMask = dirtMask;
+	PostProcess->Settings.bOverride_BloomDirtMaskIntensity = false;
+	PostProcess->Settings.bOverride_BloomDirtMask = false;
+	PostProcess->Settings.BloomDirtMaskIntensity = 25.0f;
+
 	//PlugIn
-	CHelpers::GetAsset<UCDataAsset>(&Test_DataAsset, "CDataAsset'/Game/Player/DA_Test.DA_Test'");
+	//CHelpers::GetAsset<UCDataAsset>(&Test_DataAsset, "CDataAsset'/Game/Player/DA_Test.DA_Test'");
 }
 
 
@@ -101,13 +111,13 @@ void ACPlayer::BeginPlay()
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ACPlayer::OnComponentEndOverlap);
 
 	//PlugIn
-	if (!!Test_DataAsset)
+	/*if (!!Test_DataAsset)
 	{
 		CLog::Print(Test_DataAsset->GetName().ToString());
 		CLog::Print(Test_DataAsset->GetValue());
 		CLog::Print(Test_DataAsset->GetMaterials()[0]->GetName());
 		CLog::Print(Test_DataAsset->GetMaterials()[1]->GetName());
-	}
+	}*/
 }
 
 void ACPlayer::Tick(float DeltaTime)
@@ -357,8 +367,18 @@ float ACPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContr
 
 void ACPlayer::Hitted()
 {
+	PostProcess->Settings.bOverride_BloomDirtMaskIntensity = true;
+	PostProcess->Settings.bOverride_BloomDirtMask = true;
+	UKismetSystemLibrary::K2_SetTimer(this, "Hitted_End", 0.2f, false);
+
 	Status->SetMove();
 	Montages->PlayHitted();
+}
+
+void ACPlayer::Hitted_End()
+{
+	PostProcess->Settings.bOverride_BloomDirtMaskIntensity = false;
+	PostProcess->Settings.bOverride_BloomDirtMask = false;
 }
 
 void ACPlayer::Dead()
