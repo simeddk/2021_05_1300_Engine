@@ -67,6 +67,10 @@ ACPlayer::ACPlayer()
 	PostProcess->Settings.bOverride_BloomDirtMask = false;
 	PostProcess->Settings.BloomDirtMaskIntensity = 25.0f;
 
+	UMaterialInstanceConstant* scanMaterial;
+	CHelpers::GetAsset<UMaterialInstanceConstant>(&scanMaterial, "MaterialInstanceConstant'/Game/Materials/MI_Scan.MI_Scan'");
+	PostProcess->Settings.AddBlendable(scanMaterial, 1.0f);
+
 	//PlugIn
 	//CHelpers::GetAsset<UCDataAsset>(&Test_DataAsset, "CDataAsset'/Game/Player/DA_Test.DA_Test'");
 }
