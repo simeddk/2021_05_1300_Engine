@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/TimelineComponent.h"
 #include "Components/CStateComponent.h"
 #include "Interfaces/ICharacter.h"
 #include "GenericTeamAgentInterface.h"
@@ -18,6 +19,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 		class UCDataAsset* Test_DataAsset;
+
+	UPROPERTY(EditDefaultsOnly)
+		float ScanSpeed = 1.0f;
 
 private: //SceneComponent
 	UPROPERTY(VisibleDefaultsOnly)
@@ -82,6 +86,7 @@ private:
 private:
 	void OnEvade();
 	void OnInteract();
+	void OnScan();
 
 private:
 	void Begin_BackStep();
@@ -98,6 +103,9 @@ private:
 	UFUNCTION() void OnMagicBall();
 	UFUNCTION() void OnWarp();
 	UFUNCTION() void OnTornado();
+
+	UFUNCTION()
+		void OnProgress(float Output);
 	
 	void OnDoAction();
 
@@ -135,6 +143,9 @@ private:
 private:
 	class AController* DamageInstigator;
 	class ACInteractDoor* InteractDoor;
+	FTimeline Timeline;
+	class UCurveFloat* Curve;
+	class UMaterialParameterCollection* ParameterCollection;
 
 protected:
 	UPROPERTY(BlueprintReadOnly)

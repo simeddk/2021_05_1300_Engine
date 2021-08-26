@@ -12,6 +12,8 @@
 #include "Components/CFeetComponent.h"
 #include "Materials/MaterialInstanceConstant.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Materials/MaterialParameterCollection.h"
+#include "Kismet/KismetMaterialLibrary.h"
 #include "Widgets/CUserWidget_Select.h"
 #include "Widgets/CUserWidget_SelectItem.h"
 #include "Objects/CInteractDoor.h"
@@ -71,6 +73,9 @@ ACPlayer::ACPlayer()
 	CHelpers::GetAsset<UMaterialInstanceConstant>(&scanMaterial, "MaterialInstanceConstant'/Game/Materials/MI_Scan.MI_Scan'");
 	PostProcess->Settings.AddBlendable(scanMaterial, 1.0f);
 
+	CHelpers::GetAsset<UCurveFloat>(&Curve, "CurveFloat'/Game/Cameras/Curve_Spline.Curve_Spline'");;
+	CHelpers::GetAsset<UMaterialParameterCollection>(&ParameterCollection, "MaterialParameterCollection'/Game/Materials/MPC_Radius.MPC_Radius'");
+
 	//PlugIn
 	//CHelpers::GetAsset<UCDataAsset>(&Test_DataAsset, "CDataAsset'/Game/Player/DA_Test.DA_Test'");
 }
@@ -128,6 +133,7 @@ void ACPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	Timeline.TickTimeline(DeltaTime);
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -161,6 +167,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("SelectAction", EInputEvent::IE_Released, this, &ACPlayer::OffSelectAction);
 	
 	PlayerInputComponent->BindAction("Interact", EInputEvent::IE_Released, this, &ACPlayer::OnInteract);
+	PlayerInputComponent->BindAction("Scan", EInputEvent::IE_Released, this, &ACPlayer::OnScan);
 }
 
 FGenericTeamId ACPlayer::GetGenericTeamId() const
@@ -232,6 +239,20 @@ void ACPlayer::OnInteract()
 {
 	CheckNull(InteractDoor);
 	InteractDoor->Interact(GetActorForwardVector());
+}
+
+void ACPlayer::OnScan()
+{
+	CheckFalse(State->IsIdleMode());
+
+	FOnTimelineFloat progress;
+	progress.BindUFunction(this, "OnProgress");
+
+	Timeline = FTimeline();
+	Timeline.AddInterpFloat(Curve, progress);
+	Timeline.SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame);
+	Timeline.SetPlayRate(ScanSpeed);
+	Timeline.PlayFromStart();
 }
 
 void ACPlayer::Begin_BackStep()
@@ -310,6 +331,12 @@ void ACPlayer::OnTornado()
 {
 	CheckFalse(State->IsIdleMode());
 	Action->SetTornadoMode();
+}
+
+void ACPlayer::OnProgress(float Output)
+{
+	if(!!ParameterCollection)
+		UKismetMaterialLibrary::SetScalarParameterValue(GetWorld(), ParameterCollection, "Radius", Output);
 }
 
 void ACPlayer::OnDoAction()
