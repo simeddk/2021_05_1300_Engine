@@ -23,6 +23,9 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 		float ScanSpeed = 1.0f;
 
+	UPROPERTY(EditDefaultsOnly)
+		float SmearLength = 0.1f;
+
 private: //SceneComponent
 	UPROPERTY(VisibleDefaultsOnly)
 		class USpringArmComponent* SpringArm;
@@ -85,6 +88,10 @@ private:
 
 private:
 	void OnEvade();
+	
+	UFUNCTION()
+		void End_Evade();
+
 	void OnInteract();
 	void OnScan();
 
@@ -95,6 +102,9 @@ private:
 public:
 	void End_BackStep();
 	void End_Roll();
+
+private:
+	void UpdateSmear();
 
 private:
 	UFUNCTION() void OnFist();

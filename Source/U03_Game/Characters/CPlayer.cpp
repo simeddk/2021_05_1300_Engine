@@ -76,6 +76,8 @@ ACPlayer::ACPlayer()
 	CHelpers::GetAsset<UCurveFloat>(&Curve, "CurveFloat'/Game/Cameras/Curve_Spline.Curve_Spline'");;
 	CHelpers::GetAsset<UMaterialParameterCollection>(&ParameterCollection, "MaterialParameterCollection'/Game/Materials/MPC_Radius.MPC_Radius'");
 
+	
+
 	//PlugIn
 	//CHelpers::GetAsset<UCDataAsset>(&Test_DataAsset, "CDataAsset'/Game/Player/DA_Test.DA_Test'");
 }
@@ -88,7 +90,8 @@ void ACPlayer::BeginPlay()
 	UMaterialInstanceConstant* body;
 	UMaterialInstanceConstant* logo;
 	
-	CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&body, "MaterialInstanceConstant'/Game/Materials/MI_Player_Body.MI_Player_Body'");
+	//CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&body, "MaterialInstanceConstant'/Game/Materials/MI_Player_Body.MI_Player_Body'");
+	CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&body, "MaterialInstanceConstant'/Game/Materials/MI_Smear.MI_Smear'");
 	CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&logo, "MaterialInstanceConstant'/Game/Materials/MI_Player_Logo.MI_Player_Logo'");
 	
 	BodyMaterial = UMaterialInstanceDynamic::Create(body, this);
@@ -118,6 +121,8 @@ void ACPlayer::BeginPlay()
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACPlayer::OnComponentBeginOverlap);
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ACPlayer::OnComponentEndOverlap);
+
+	Action->SetUnarmedMode();
 
 	//PlugIn
 	/*if (!!Test_DataAsset)
@@ -182,6 +187,8 @@ void ACPlayer::OnMoveForward(float InAxis)
 	FRotator rotator = FRotator(0, GetControlRotation().Yaw, 0);
 	FVector direction = FQuat(rotator).GetForwardVector();
 	AddMovementInput(direction, InAxis);
+	
+	UpdateSmear();
 }
 
 void ACPlayer::OnMoveRight(float InAxis)
@@ -191,6 +198,8 @@ void ACPlayer::OnMoveRight(float InAxis)
 	FRotator rotator = FRotator(0, GetControlRotation().Yaw, 0);
 	FVector direction = FQuat(rotator).GetRightVector();
 	AddMovementInput(direction, InAxis);
+
+	UpdateSmear();
 }
 
 void ACPlayer::OnHorizontalLook(float InAxis)
@@ -226,6 +235,25 @@ void ACPlayer::OnEvade()
 	CheckFalse(State->IsIdleMode());
 	CheckFalse(Status->CanMove());
 
+	if (Action->IsUnarmedMode())
+	{
+		GetCharacterMovement()->GravityScale = 0.0f;
+
+		FVector direction = FVector::ZeroVector;
+		if (FMath::IsNearlyZero(GetVelocity().Size()))
+			direction = GetActorUpVector();
+		else
+			direction = GetVelocity().GetSafeNormal();
+
+		FVector launch = direction * GetCharacterMovement()->MaxWalkSpeed * 0.5f;
+
+		LaunchCharacter(launch, false, true);
+		SpringArm->TargetArmLength = 300.0f;
+		UKismetSystemLibrary::K2_SetTimer(this, "End_Evade", 1.0f, false);
+
+		return;
+	}
+
 	if (InputComponent->GetAxisValue("MoveForward") < 0.0f)
 	{
 		State->SetBackStepMode();
@@ -233,6 +261,12 @@ void ACPlayer::OnEvade()
 	}
 
 	State->SetRollMode();
+}
+
+void ACPlayer::End_Evade()
+{
+	GetCharacterMovement()->GravityScale = 1.0f;
+	SpringArm->TargetArmLength = 200.0f;
 }
 
 void ACPlayer::OnInteract()
@@ -295,6 +329,19 @@ void ACPlayer::End_Roll()
 	}
 
 	State->SetIdleMode();
+}
+
+void ACPlayer::UpdateSmear()
+{
+	if (FMath::IsNearlyEqual(GetCharacterMovement()->MaxWalkSpeed, Status->GetSprintSpeed()))
+	{
+		BodyMaterial->SetVectorParameterValue("Direction", -GetVelocity().GetSafeNormal());
+		BodyMaterial->SetScalarParameterValue("Amount", GetVelocity().Size() * SmearLength);
+		return;
+	}
+
+	BodyMaterial->SetVectorParameterValue("Direction", FVector::ZeroVector);
+	BodyMaterial->SetScalarParameterValue("Amout", 0.0f);
 }
 
 void ACPlayer::OnFist()

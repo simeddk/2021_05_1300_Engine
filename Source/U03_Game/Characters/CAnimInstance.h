@@ -19,6 +19,9 @@ protected:
 		float Direction;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+		bool bFalling;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		EActionType ActionType;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)

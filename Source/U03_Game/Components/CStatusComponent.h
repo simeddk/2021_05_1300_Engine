@@ -20,7 +20,7 @@ private:
 		float MaxHealth = 100.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Speed")
-		float Speed[(int32)ECharacterSpeed::Max] = { 200, 400, 600 };
+		float Speed[(int32)ECharacterSpeed::Max] = { 200, 400, 1200 };
 
 public:
 	FORCEINLINE float GetMaxHealth(){ return MaxHealth; }
