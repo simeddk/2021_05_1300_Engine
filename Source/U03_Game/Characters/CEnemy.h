@@ -13,7 +13,7 @@ class U03_GAME_API ACEnemy : public ACharacter, public IICharacter
 
 private:
 	UPROPERTY(EditAnywhere)
-		bool bDrawName = true;
+		bool bDrawName = false;
 
 	UPROPERTY(EditDefaultsOnly)
 		float LauchValue = 100.0f;
