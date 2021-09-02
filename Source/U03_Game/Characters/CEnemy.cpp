@@ -71,14 +71,17 @@ void ACEnemy::BeginPlay()
 
 	Super::BeginPlay();
 
-	NameWidget->InitWidget();
-	Cast<UCUserWidget_Name>(NameWidget->GetUserWidgetObject())->SetNameText(GetName());
-	Cast<UCUserWidget_Name>(NameWidget->GetUserWidgetObject())->SetControllerText(GetController()->GetName());
+	if (!!GetController())
+	{
+		NameWidget->InitWidget();
+		Cast<UCUserWidget_Name>(NameWidget->GetUserWidgetObject())->SetNameText(GetName());
+		Cast<UCUserWidget_Name>(NameWidget->GetUserWidgetObject())->SetControllerText(GetController()->GetName());
 
-	HealthWidget->InitWidget();
-	Cast<UCUserWidget_Health>(HealthWidget->GetUserWidgetObject())->Update(Status->GetHealth(), Status->GetMaxHealth());
+		HealthWidget->InitWidget();
+		Cast<UCUserWidget_Health>(HealthWidget->GetUserWidgetObject())->Update(Status->GetHealth(), Status->GetMaxHealth());
 
-	NameWidget->SetVisibility(bDrawName);
+		NameWidget->SetVisibility(bDrawName);
+	}
 }
 
 

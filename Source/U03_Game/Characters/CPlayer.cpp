@@ -105,24 +105,25 @@ void ACPlayer::BeginPlay()
 
 	Action->SetUnarmedMode();
 
-	SelectWidget = CreateWidget<UCUserWidget_Select, APlayerController>(GetController<APlayerController>(), SelectWidgetClass);
-	SelectWidget->AddToViewport();
+	if (!!GetController())
+	{
+		SelectWidget = CreateWidget<UCUserWidget_Select, APlayerController>(GetController<APlayerController>(), SelectWidgetClass);
+		SelectWidget->AddToViewport();
 
-	SelectWidget->SetVisibility(ESlateVisibility::Hidden);
-	
-	UCUserWidget_SelectItem* item = SelectWidget->GetItem("Item1");
+		SelectWidget->SetVisibility(ESlateVisibility::Hidden);
+		
+		UCUserWidget_SelectItem* item = SelectWidget->GetItem("Item1");
 
-	SelectWidget->GetItem("Item1")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnFist);
-	SelectWidget->GetItem("Item2")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnOneHand);
-	SelectWidget->GetItem("Item3")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnTwoHand);
-	SelectWidget->GetItem("Item4")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnMagicBall);
-	SelectWidget->GetItem("Item5")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnWarp);
-	SelectWidget->GetItem("Item6")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnTornado);
+		SelectWidget->GetItem("Item1")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnFist);
+		SelectWidget->GetItem("Item2")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnOneHand);
+		SelectWidget->GetItem("Item3")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnTwoHand);
+		SelectWidget->GetItem("Item4")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnMagicBall);
+		SelectWidget->GetItem("Item5")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnWarp);
+		SelectWidget->GetItem("Item6")->OnUserWidget_Select_Clicked.AddDynamic(this, &ACPlayer::OnTornado);
 
-	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACPlayer::OnComponentBeginOverlap);
-	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ACPlayer::OnComponentEndOverlap);
-
-	Action->SetUnarmedMode();
+		GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACPlayer::OnComponentBeginOverlap);
+		GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ACPlayer::OnComponentEndOverlap);
+	}
 
 	//PlugIn
 	/*if (!!Test_DataAsset)
@@ -151,8 +152,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("VerticalLook", this, &ACPlayer::OnVerticalLook);
 	PlayerInputComponent->BindAxis("Zoom", this, &ACPlayer::OnZoom);
 
-	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, this, &ACPlayer::OnWalk);
-	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, this, &ACPlayer::OffWalk);
+	//PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, this, &ACPlayer::OnWalk);
+	//PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, this, &ACPlayer::OffWalk);
 
 	PlayerInputComponent->BindAction("Evade", EInputEvent::IE_Pressed, this, &ACPlayer::OnEvade);
 
@@ -333,13 +334,15 @@ void ACPlayer::End_Roll()
 
 void ACPlayer::UpdateSmear()
 {
+	CheckNull(BodyMaterial);
+
 	if (FMath::IsNearlyEqual(GetCharacterMovement()->MaxWalkSpeed, Status->GetSprintSpeed()))
 	{
 		BodyMaterial->SetVectorParameterValue("Direction", -GetVelocity().GetSafeNormal());
 		BodyMaterial->SetScalarParameterValue("Amount", GetVelocity().Size() * SmearLength);
 		return;
 	}
-
+	
 	BodyMaterial->SetVectorParameterValue("Direction", FVector::ZeroVector);
 	BodyMaterial->SetScalarParameterValue("Amout", 0.0f);
 }

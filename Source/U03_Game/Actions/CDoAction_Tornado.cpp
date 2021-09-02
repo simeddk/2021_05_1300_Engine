@@ -67,6 +67,9 @@ void ACDoAction_Tornado::End_DoAction()
 void ACDoAction_Tornado::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	CheckNull(OwnerCharacter);
+
 	FVector location = OwnerCharacter->GetActorLocation();
 
 	Angle += Speed * DeltaSeconds;
