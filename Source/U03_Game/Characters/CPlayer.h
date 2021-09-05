@@ -31,10 +31,11 @@ private: //SceneComponent
 		class USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleDefaultsOnly)
-		class UCameraComponent* Camera;
-
-	UPROPERTY(VisibleDefaultsOnly)
 		class UPostProcessComponent* PostProcess;
+
+protected:
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
+		class UCameraComponent* Camera;
 
 private: //ActorComponent
 	UPROPERTY(VisibleDefaultsOnly)

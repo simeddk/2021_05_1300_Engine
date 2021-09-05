@@ -22,4 +22,5 @@ void ACHUD::DrawHUD()
 	item.BlendMode = SE_BLEND_Translucent;
 
 	Canvas->DrawItem(item);
+
 }
